@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <script>
+
+        /*Задание 1.*/
+        let degreesCelsius = prompt('Введите температуру в градусах по Цельсию');
+        let degreesFahrenheit;
+
+        degreesCelsius = parseFloat(degreesCelsius);
+        degreesFahrenheit = (9 / 5) * degreesCelsius + 32;
+
+        alert(`${degreesCelsius} градусов по Цельсию это ${degreesFahrenheit} градусов по Фаренгейту`);
+
+        /*Задание 2.*/
+        let admin;
+        let name;
+        name = 'Василий';
+        admin = name;
+        console.log(admin);
+
+        /* Задание 3.
+        Ответ: выражение будет = "1000108" */
+
+        /*Задание 4.
+        Оба атрибута не блокируют отрисовку страницы.
+        Различия в порядке загрузки:
+        async -	Порядок загрузки (кто загрузится первым, тот и сработает).
+        defer -	Порядок документа (как расположены в документе). */
+
+    </script>
+</body>
+
+</html>
