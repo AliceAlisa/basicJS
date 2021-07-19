@@ -25,20 +25,72 @@ console.log(firstObj);  Не совсем поняла, обязательно �
 
 
 /*Задание 2 */
+let jeans = {};
+let tshirt = {};
+let shorts = {};
+let cap = {};
+let sneakers = {};
+
 const cart = {
     productList: [
-        ['jeans', 50, 1],
-        ['T-shirt', 15, 3],
-        ['shorts', 20, 2],
-        ['cap', 15, 2],
-        ['sneakers', 80, 1]
+        jeans = {
+            price: 50,
+            quantity: 1
+        },
+        tshirt = {
+            price: 15,
+            quantity: 3
+        },
+        shorts = {
+            price: 20,
+            quantity: 2
+        },
+        cap = {
+            price: 15,
+            quantity: 2
+        },
+        sneakers = {
+            price: 80,
+            quantity: 1
+        }
     ],
+
     countBasketPrice(cart) {
         let summ = 0;
-        for (let i = 0; i < cart.length; i++) {
-            summ += cart[i][1] * cart[i][2];
+        for (let i = 0; i < this.productList.length; i++) {
+            summ += this.productList[i].price * this.productList[i].quantity;
         }
         return summ;
     }
+
 }
-console.log('Сумма корзины: ' + cart.countBasketPrice(cart.productList) + '\n');
+console.log('Сумма корзины: ' + cart.countBasketPrice(cart.productList));
+
+/*Задание 3
+let productName1 = {
+    id: 9839858340,
+    info: 'lorem',
+    price: 50,
+    quantity: 1
+}
+let productName2 = {
+    id: 989675678,
+    info: 'lorem',
+    price: 30,
+    quantity: 1
+}
+let productNameN = {
+    id: 8800890043,
+    info: 'lorem',
+    price: 10,
+    quantity: 1
+}
+
+
+let catalog = {
+    productName1,
+    productName2,
+    productNameN
+}
+
+*/
