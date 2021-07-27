@@ -80,12 +80,14 @@ const cart = {
     },
 
     checkCart() {
+        let cartText = document.createElement('p');
+        this.containerCart.appendChild(cartText);
         if (this.productList.length == 0) {
-            this.containerCart.textContent = 'Корзина пуста!';
-            return this.containerCart.textContent;
+            cartText.textContent = 'Корзина пуста!';
+            return cartText.textContent;
         } else {
-            this.containerCart.textContent = 'В корзине ' + this.productList.length + ' товаров ' + 'на сумму ' + this.countBasketPrice() + ' рублей';
-            return this.containerCart.textContent;
+            cartText.textContent = 'В корзине ' + this.productList.length + ' товаров ' + 'на сумму ' + this.countBasketPrice() + ' рублей';
+            return cartText.textContent;
         }
     }
 }
@@ -93,7 +95,7 @@ cart.checkCart();
 
 /*Задание 3 */
 let j33444 = {
-    name: 'jeans',
+    name: 'Jeans',
     price: 50,
 };
 let t56737 = {
@@ -101,15 +103,15 @@ let t56737 = {
     price: 15,
 };
 let s80904 = {
-    name: 'shorts',
+    name: 'Shorts',
     price: 20,
 };
 let c76833 = {
-    name: 'cap',
+    name: 'Cap',
     price: 15,
 };
 let s54521 = {
-    name: 'sneakers',
+    name: 'Sneakers',
     price: 80,
 };
 
@@ -124,29 +126,37 @@ let product = {
     ],
 
     containerCatalog: document.getElementById('catalog'),
-    productArr: [],
-    totalHTML: '',
+    productNameArr: [],
+    productPriceArr: [],
 
-    generateProductArr() {
+    generateProductArrs() {
         for (let i = 0; i < this.productList.length; i++) {
-            this.productArr.push(this.productList[i].name);
-            this.productArr.push(this.productList[i].price);
+            this.productNameArr.push(this.productList[i].name);
+            this.productPriceArr.push(this.productList[i].price);
         }
-        return this.productArr;
+        return this.productNameArr, this.productPriceArr;
     },
 
     displayProduct() {
-        this.containerCatalog.innerHTML = '<p> Каталог </p>';
-        this.generateProductArr();
-        for (let i = 0; i < this.productArr.length; i++) {
-            this.totalHTML += this.productArr[i] + ' ';
-            if (i % 2 == 1) {
-                this.totalHTML += ' rub <br>'
-            } else {
-                this.totalHTML += ': '
-            }
+        let catalogTitel = document.createElement('h2');
+        this.containerCatalog.appendChild(catalogTitel);
+        catalogTitel.textContent = ' Каталог ';
+
+        this.generateProductArrs();
+
+        for (let i = 0; i < this.productNameArr.length; i++) {
+
+            let productContainer = document.createElement('div');
+            let productTitle = document.createElement('h4');
+            let productText = document.createElement('p');
+
+            this.containerCatalog.appendChild(productContainer);
+            productContainer.appendChild(productTitle);
+            productContainer.appendChild(productText);
+
+            productText.textContent = this.productPriceArr[i] + ' rub';
+            productTitle.textContent = this.productNameArr[i];
         };
-        this.containerCatalog.innerHTML += this.totalHTML;
     }
 }
 
