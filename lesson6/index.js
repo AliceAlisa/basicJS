@@ -1,63 +1,144 @@
 'use strict';
 /*Задание 1 */
 
-/*Задание 3 */
-let j33444 = {
-    name: 'Jeans',
-    price: 50,
-    quantity: 1
-};
-let t56737 = {
-    name: 'T-shirt',
-    price: 15,
-    quantity: 3
-};
-let s80904 = {
-    name: 'Shorts',
-    price: 20,
-    quantity: 2
-};
-let c76833 = {
-    name: 'Cap',
-    price: 15,
-    quantity: 2
-};
-let s54521 = {
-    name: 'Sneakers',
-    price: 80,
-    quantity: 1
-};
+const cart = {
+
+    cartList: [],
+
+    containerCart: document.getElementById('cart'),
+
+    cartText: null,
+    cartContainerElem: null,
+    cartTitle: null,
+    cartProductPrice: null,
+    cartProductQuanity: null,
+
+    initCart() {
+        this.cartText = document.createElement('p');
+        this.containerCart.appendChild(this.cartText);
+
+        let cartBtn = document.createElement('button');
+        this.containerCart.appendChild(cartBtn);
+        cartBtn.textContent = 'CLEAR CART';
+
+        cartBtn.addEventListener('click', () => {
+            this.clearCart();
+        });
+    },
+
+    countBasketPrice() {
+        let summ = 0;
+        for (let i = 0; i < this.cartList.length; i++) {
+            summ += this.cartList[i].price * this.cartList[i].quantity;
+        }
+        return summ;
+    },
+    countBasketQuantity() {
+        let quan = 0;
+        for (let i = 0; i < this.cartList.length; i++) {
+            quan += this.cartList[i].quantity;
+        }
+        return quan;
+    },
+
+    initCartAddToCart(obj) {
+        let oldProductIndex = this.cartList.findIndex(item => item.id == obj.id);
+
+        if (oldProductIndex == -1) {
+            this.cartList.push(obj);
+            this.cartAddToCart(obj);
+        } else {
+            this.cartList[oldProductIndex].quantity += 1;
+            this.cartProductQuanity.textContent = ('Количество: ' + this.cartList[oldProductIndex].quantity);
+        }
+        this.checkCart();
+    },
+
+    cartAddToCart(obj) {
+        let indexArr = this.cartList.findIndex(item => item.id == obj.id);
+
+        this.cartContainerElem = document.createElement('div');
+        this.cartTitle = document.createElement('h4');
+        this.cartProductPrice = document.createElement('p');
+        this.cartProductQuanity = document.createElement('p');
+
+        this.containerCart.appendChild(this.cartContainerElem);
+        this.cartContainerElem.appendChild(this.cartTitle);
+        this.cartContainerElem.appendChild(this.cartProductPrice);
+        this.cartContainerElem.appendChild(this.cartProductQuanity);
+
+        this.cartProductPrice.textContent = this.cartList[indexArr].price + ' $';
+        this.cartProductQuanity.textContent = ('Количество: ' + 1);
+        this.cartTitle.textContent = this.cartList[indexArr].name;
+    },
+    checkCart() {
+
+        if (this.cartList.length == 0) {
+            this.cartText.textContent = 'Корзина пуста!';
+            return this.cartText.textContent;
+        } else {
+            this.cartText.textContent = 'В корзине ' + this.countBasketQuantity() + ' товаров ' + 'на сумму ' + this.countBasketPrice() + ' $';
+            return this.cartText.textContent;
+        }
+    },
+
+    clearCart() {
+        for (let i = 0; i < this.cartList.length; i++) {
+            this.containerCart.querySelector('div').remove();
+        }
+        this.cartList = [];
+        /*  this.containerCart.removeChild(this.containerCart.querySelectorAll('div'));*/
+        this.checkCart();
+        console.log(this.cartList);
+    }
+}
+
+cart.initCart();
 
 let product = {
+    cart,
 
     productList: [
-        j33444,
-        t56737,
-        s80904,
-        c76833,
-        s54521
+        {
+            id: 33444,
+            name: 'Jeans',
+            price: 50,
+            quantity: 1
+        },
+        {
+            id: 56737,
+            name: 'T-shirt',
+            price: 15,
+            quantity: 1
+        },
+        {
+            id: 80904,
+            name: 'Shorts',
+            price: 20,
+            quantity: 1
+        },
+        {
+            id: 76833,
+            name: 'Cap',
+            price: 15,
+            quantity: 1
+        },
+        {
+            id: 54521,
+            name: 'Sneakers',
+            price: 80,
+            quantity: 1
+        }
     ],
 
     containerCatalog: document.getElementById('catalog'),
-    productNameArr: [],
-    productPriceArr: [],
-
-    generateProductArrs() {
-        for (let i = 0; i < this.productList.length; i++) {
-            this.productNameArr.push(this.productList[i].name);
-            this.productPriceArr.push(this.productList[i].price);
-        }
-        return this.productNameArr, this.productPriceArr;
-    },
 
     displayProduct() {
         let catalogTitel = document.createElement('h2');
         this.containerCatalog.appendChild(catalogTitel);
         catalogTitel.textContent = ' Каталог ';
 
-        this.generateProductArrs();
-
-        for (let i = 0; i < this.productNameArr.length; i++) {
+        for (let i = 0; i < this.productList.length; i++) {
 
             let productContainer = document.createElement('div');
             let productTitle = document.createElement('h4');
@@ -69,76 +150,35 @@ let product = {
             productContainer.appendChild(productText);
             productContainer.appendChild(productBtn);
 
-            productText.textContent = this.productPriceArr[i] + ' rub';
-            productTitle.textContent = this.productNameArr[i];
+            productText.textContent = this.productList[i].price + ' $';
+            productTitle.textContent = this.productList[i].name;
             productBtn.textContent = 'ADD TO CART';
+
+            productBtn.id = this.productList[i].id;
         };
     },
 
     initAddToCart() {
         this.displayProduct();
-        let bth = document.getElementsByTagName('button');
+        this.containerCatalog.addEventListener('click', () => {
+            this.clickAddToCart(event);
+        });
+    },
 
-        console.log(bth);
-    }
+    clickAddToCart(event) {
+        if (event.target.tagName !== 'BUTTON') return;
+        this.findAddToCart(event.target.id);
+    },
+
+    findAddToCart(idTarget) {
+        let addElemNum = this.productList.findIndex(elem => elem.id == idTarget);
+        this.addToCart(addElemNum);
+    },
+
+    addToCart(addElemNum) {
+        this.cart.initCartAddToCart(this.productList[addElemNum]);
+    },
 }
 product.initAddToCart();
 
 
-/*Задание 2*/
-/*let jeans = {
-    price: 50,
-    quantity: 1
-};
-let tshirt = {};
-let shorts = {};
-let cap = {};
-let sneakers = {};*/
-
-const cart = {
-    productList: [
-        /* jeans = {
-             price: 50,
-             quantity: 1
-         },
-         tshirt = {
-             price: 15,
-             quantity: 3
-         },
-         shorts = {
-             price: 20,
-             quantity: 2
-         },
-         cap = {
-             price: 15,
-             quantity: 2
-         },
-         sneakers = {
-             price: 80,
-             quantity: 1
-         }*/
-    ],
-
-    containerCart: document.getElementById('cart'),
-
-    countBasketPrice() {
-        let summ = 0;
-        for (let i = 0; i < this.productList.length; i++) {
-            summ += this.productList[i].price * this.productList[i].quantity;
-        }
-        return summ;
-    },
-
-    checkCart() {
-        let cartText = document.createElement('p');
-        this.containerCart.appendChild(cartText);
-        if (this.productList.length == 0) {
-            cartText.textContent = 'Корзина пуста!';
-            return cartText.textContent;
-        } else {
-            cartText.textContent = 'В корзине ' + this.productList.length + ' товаров ' + 'на сумму ' + this.countBasketPrice() + ' рублей';
-            return cartText.textContent;
-        }
-    }
-}
-cart.checkCart();
