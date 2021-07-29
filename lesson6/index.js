@@ -12,36 +12,25 @@ const cart = {
     cartTitle: null,
     cartProductPrice: null,
     cartProductQuanity: null,
+    cartBtn: null,
 
-    initCart() {
+    rendorCart() {
         this.cartText = document.createElement('p');
         this.containerCart.appendChild(this.cartText);
+        this.cartText.textContent = 'Корзина пуста!';
 
-        let cartBtn = document.createElement('button');
-        this.containerCart.appendChild(cartBtn);
-        cartBtn.textContent = 'CLEAR CART';
+        this.cartBtn = document.createElement('button');
+        this.containerCart.appendChild(this.cartBtn);
+        this.cartBtn.textContent = 'CLEAR CART';
+        this.cartBtn.classList.add('hiddenBtn');
 
-        cartBtn.addEventListener('click', () => {
+        this.cartBtn.addEventListener('click', () => {
             this.clearCart();
         });
     },
 
-    countBasketPrice() {
-        let summ = 0;
-        for (let i = 0; i < this.cartList.length; i++) {
-            summ += this.cartList[i].price * this.cartList[i].quantity;
-        }
-        return summ;
-    },
-    countBasketQuantity() {
-        let quan = 0;
-        for (let i = 0; i < this.cartList.length; i++) {
-            quan += this.cartList[i].quantity;
-        }
-        return quan;
-    },
-
-    initCartAddToCart(obj) {
+    checkCartAddToCart(obj) {
+        this.cartBtn.classList.remove('hiddenBtn');
         let oldProductIndex = this.cartList.findIndex(item => item.id == obj.id);
 
         if (oldProductIndex == -1) {
@@ -71,6 +60,20 @@ const cart = {
         this.cartProductQuanity.textContent = ('Количество: ' + 1);
         this.cartTitle.textContent = this.cartList[indexArr].name;
     },
+    countBasketPrice() {
+        let summ = 0;
+        for (let i = 0; i < this.cartList.length; i++) {
+            summ += this.cartList[i].price * this.cartList[i].quantity;
+        }
+        return summ;
+    },
+    countBasketQuantity() {
+        let quan = 0;
+        for (let i = 0; i < this.cartList.length; i++) {
+            quan += this.cartList[i].quantity;
+        }
+        return quan;
+    },
     checkCart() {
 
         if (this.cartList.length == 0) {
@@ -85,15 +88,13 @@ const cart = {
     clearCart() {
         for (let i = 0; i < this.cartList.length; i++) {
             this.containerCart.querySelector('div').remove();
-        }
+            this.cartList[i].quantity = 1;
+        };
         this.cartList = [];
-        /*  this.containerCart.removeChild(this.containerCart.querySelectorAll('div'));*/
         this.checkCart();
-        console.log(this.cartList);
+        this.cartBtn.classList.add('hiddenBtn');
     }
 }
-
-cart.initCart();
 
 let product = {
     cart,
@@ -156,10 +157,12 @@ let product = {
 
             productBtn.id = this.productList[i].id;
         };
+        this.initAddToCart();
+        this.cart.rendorCart();
     },
 
     initAddToCart() {
-        this.displayProduct();
+
         this.containerCatalog.addEventListener('click', () => {
             this.clickAddToCart(event);
         });
@@ -176,9 +179,11 @@ let product = {
     },
 
     addToCart(addElemNum) {
-        this.cart.initCartAddToCart(this.productList[addElemNum]);
+        let addToCartElem = this.productList[addElemNum];
+        this.cart.checkCartAddToCart(addToCartElem);
     },
 }
-product.initAddToCart();
+product.displayProduct();
+
 
 
