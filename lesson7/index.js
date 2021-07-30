@@ -89,7 +89,7 @@ const map = {
     },
 
     /*Размещение всех точек(элементов игры) */
-    render(snakePointsArray, foodPoint) {
+    render(snakePointsArray, foodPoint, obstructionPoint) {
         for (const cell of this.usedCells) {
             cell.className = 'cell'; /*сначала "обнуляем" значения всех ячеек */
         }
@@ -107,7 +107,13 @@ const map = {
         const foodCell = this.cells[`x${foodPoint.x}_y${foodPoint.y}`];
         foodCell.classList.add('food');
         this.usedCells.push(foodCell);
+
+        /*добавляем координаты препятствия */
+        const obstructionCell = this.cells[`x${obstructionPoint.x}_y${obstructionPoint.y}`];
+        obstructionCell.classList.add('obstruction');
+        this.usedCells.push(obstructionCell);
     },
+
 };
 
 /*работа змейки */
@@ -219,6 +225,37 @@ const status = {
     },
 };
 
+const count = {
+    currentCount: 0,
+    countElem: document.getElementById('count'),
+
+    displayCurrentCount() {
+        this.countElem.textContent = this.currentCount;
+    }
+};
+
+const obstruction = {
+    x: null,
+    y: null,
+
+    getCoordinates() {
+        return {
+            x: this.x,
+            y: this.y,
+        };
+    },
+
+    setCoordinates(point) {
+        this.x = point.x;
+        this.y = point.y;
+    },
+
+    /*проверка не попала ли змейка на препятствие */
+    isOnPoint(point) {
+        return this.x === point.x && this.y === point.y;
+    },
+};
+
 /*собираем всё вместе */
 const game = {
     config,
@@ -226,6 +263,8 @@ const game = {
     snake,
     food,
     status,
+    count,
+    obstruction,
     tickInterval: null,
 
     init(userSettings = {}) {
@@ -242,6 +281,7 @@ const game = {
         this.map.init(this.config.getRowsCount(), this.config.getColsCount());
         this.setEventHandlers();
         this.reset();
+        this.count.displayCurrentCount();
     },
 
     /*обработчики событий */
@@ -307,6 +347,9 @@ const game = {
         this.stop();
         this.snake.init(this.getStartSnakeBody(), 'up'); /*начальное состояние змейки */
         this.food.setCoordinates(this.getRandomFreeCoordinates()); /* инециализация еды*/
+        this.obstruction.setCoordinates(this.getRandomFreeCoordinates());
+        this.count.currentCount = 0;
+        this.count.displayCurrentCount();
         this.render()
     },
 
@@ -322,7 +365,7 @@ const game = {
 
     /*генерация свободной координаты */
     getRandomFreeCoordinates() {
-        const exclude = [this.food.getCoordinates(), ...this.snake.getBody()];/*занятые точки */
+        const exclude = [this.food.getCoordinates(), this.obstruction.getCoordinates(), ...this.snake.getBody()];/*занятые точки */
 
         while (true) {
             const rndPoint = {
@@ -363,6 +406,8 @@ const game = {
         if (this.food.isOnPoint(this.snake.getNextStepHeadPoint())) {
             this.snake.growUp();
             this.food.setCoordinates(this.getRandomFreeCoordinates());
+            this.count.currentCount += 1;
+            this.count.displayCurrentCount();
 
             if (this.isGameWon()) this.finish();
         }
@@ -375,10 +420,12 @@ const game = {
     canMakeStep() {
         const nextHeadPoint = this.snake.getNextStepHeadPoint();
         return !this.snake.isOnPoint(nextHeadPoint) &&
+            !this.snake.isOnPoint(this.obstruction.getCoordinates()) &&
             nextHeadPoint.x < this.config.getColsCount() &&
             nextHeadPoint.y < this.config.getRowsCount() &&
             nextHeadPoint.x >= 0 &&
             nextHeadPoint.y >= 0;
+
     },
 
     /*проверка на победу */
@@ -399,7 +446,7 @@ const game = {
 
     /*отрисовывет старт игры */
     render() {
-        this.map.render(this.snake.getBody(), this.food.getCoordinates());
+        this.map.render(this.snake.getBody(), this.food.getCoordinates(), this.obstruction.getCoordinates());
     },
 };
 

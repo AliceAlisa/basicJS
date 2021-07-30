@@ -44,3 +44,12 @@ td.cell{
 .disabled:hover{
     background: #7c7c7c;
 }
+#count-text {
+    margin-top: 10%;
+    margin-left: 10%;
+    font-size: 20px;
+    color: #eee;
+}
+.obstruction {
+    background-color: black;
+}
