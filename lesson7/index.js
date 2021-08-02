@@ -89,7 +89,7 @@ const map = {
     },
 
     /*Размещение всех точек(элементов игры) */
-    render(snakePointsArray, foodPoint, obstructionPoint) {
+    render(snakePointsArray, foodPoint, obstructionPointsArr) {
         for (const cell of this.usedCells) {
             cell.className = 'cell'; /*сначала "обнуляем" значения всех ячеек */
         }
@@ -108,10 +108,11 @@ const map = {
         foodCell.classList.add('food');
         this.usedCells.push(foodCell);
 
-        /*добавляем координаты препятствия */
-        const obstructionCell = this.cells[`x${obstructionPoint.x}_y${obstructionPoint.y}`];
-        obstructionCell.classList.add('obstruction');
-        this.usedCells.push(obstructionCell);
+        obstructionPointsArr.forEach((point) => {
+            const obstrCell = this.cells[`x${point.x}_y${point.y}`];
+            obstrCell.classList.add('obstruction');
+            this.usedCells.push(obstrCell);
+        });
     },
 
 };
@@ -235,24 +236,18 @@ const count = {
 };
 
 const obstruction = {
-    x: null,
-    y: null,
+    obstructionArr: [],
 
+    initObstr(newObstructionArr) {
+        this.obstructionArr = newObstructionArr;
+    },
     getCoordinates() {
-        return {
-            x: this.x,
-            y: this.y,
-        };
+        return this.obstructionArr
     },
-
-    setCoordinates(point) {
-        this.x = point.x;
-        this.y = point.y;
-    },
-
-    /*проверка не попала ли змейка на препятствие */
-    isOnPoint(point) {
-        return this.x === point.x && this.y === point.y;
+    isOnObstr(point) {
+        return this.getCoordinates().some((snakePoint) => {
+            return snakePoint.x === point.x && snakePoint.y === point.y;
+        });
     },
 };
 
@@ -347,11 +342,19 @@ const game = {
         this.stop();
         this.snake.init(this.getStartSnakeBody(), 'up'); /*начальное состояние змейки */
         this.food.setCoordinates(this.getRandomFreeCoordinates()); /* инециализация еды*/
-        this.obstruction.setCoordinates(this.getRandomFreeCoordinates());
+        this.obstruction.initObstr(this.getObstructionCoordinates());
         this.count.currentCount = 0;
         this.count.displayCurrentCount();
         this.render()
     },
+    getObstructionCoordinates() {
+        let newObstructionArr = [];
+        for (let i = 0; i < 3; i++) {
+            newObstructionArr.push(this.getRandomFreeCoordinates());
+        };
+        return newObstructionArr;
+    },
+
 
     /*задает начальное положение змейки на поле */
     getStartSnakeBody() {
@@ -365,7 +368,7 @@ const game = {
 
     /*генерация свободной координаты */
     getRandomFreeCoordinates() {
-        const exclude = [this.food.getCoordinates(), this.obstruction.getCoordinates(), ...this.snake.getBody()];/*занятые точки */
+        const exclude = [this.food.getCoordinates(), ...this.obstruction.getCoordinates(), ...this.snake.getBody()];/*занятые точки */
 
         while (true) {
             const rndPoint = {
@@ -420,7 +423,7 @@ const game = {
     canMakeStep() {
         const nextHeadPoint = this.snake.getNextStepHeadPoint();
         return !this.snake.isOnPoint(nextHeadPoint) &&
-            !this.snake.isOnPoint(this.obstruction.getCoordinates()) &&
+            !this.obstruction.isOnObstr(nextHeadPoint) &&
             nextHeadPoint.x < this.config.getColsCount() &&
             nextHeadPoint.y < this.config.getRowsCount() &&
             nextHeadPoint.x >= 0 &&
