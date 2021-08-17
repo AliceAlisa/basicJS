@@ -39,31 +39,35 @@ const chessBoard = {
 chessBoard.initChessCells();
 
 /*Задание 2*/
-let jeans = {};
-let tshirt = {};
-let shorts = {};
-let cap = {};
-let sneakers = {};
 
 const cart = {
     productList: [
-        jeans = {
+        {
+            id: 8900932,
+            type: 'jeans',
             price: 50,
             quantity: 1
         },
-        tshirt = {
+        {
+            type: 'tshirt',
             price: 15,
             quantity: 3
         },
-        shorts = {
+        {
+            id: 8495830,
+            type: 'shorts',
             price: 20,
             quantity: 2
         },
-        cap = {
+        {
+            id: 4385894,
+            type: 'cap',
             price: 15,
             quantity: 2
         },
-        sneakers = {
+        {
+            id: 4922040,
+            type: 'sneakers',
             price: 80,
             quantity: 1
         }
@@ -94,57 +98,40 @@ const cart = {
 cart.checkCart();
 
 /*Задание 3 */
-let j33444 = {
-    name: 'Jeans',
-    price: 50,
-};
-let t56737 = {
-    name: 'T-shirt',
-    price: 15,
-};
-let s80904 = {
-    name: 'Shorts',
-    price: 20,
-};
-let c76833 = {
-    name: 'Cap',
-    price: 15,
-};
-let s54521 = {
-    name: 'Sneakers',
-    price: 80,
-};
 
 let product = {
 
     productList: [
-        j33444,
-        t56737,
-        s80904,
-        c76833,
-        s54521
+        {
+            name: 'Jeans',
+            price: 50,
+        },
+        {
+            name: 'T-shirt',
+            price: 15,
+        },
+        {
+            name: 'Shorts',
+            price: 20,
+        },
+        {
+            name: 'Cap',
+            price: 15,
+        },
+        {
+            name: 'Sneakers',
+            price: 80,
+        },
     ],
 
     containerCatalog: document.getElementById('catalog'),
-    productNameArr: [],
-    productPriceArr: [],
-
-    generateProductArrs() {
-        for (let i = 0; i < this.productList.length; i++) {
-            this.productNameArr.push(this.productList[i].name);
-            this.productPriceArr.push(this.productList[i].price);
-        }
-        return this.productNameArr, this.productPriceArr;
-    },
 
     displayProduct() {
         let catalogTitel = document.createElement('h2');
         this.containerCatalog.appendChild(catalogTitel);
         catalogTitel.textContent = ' Каталог ';
 
-        this.generateProductArrs();
-
-        for (let i = 0; i < this.productNameArr.length; i++) {
+        for (let i = 0; i < this.productList.length; i++) {
 
             let productContainer = document.createElement('div');
             let productTitle = document.createElement('h4');
@@ -154,8 +141,8 @@ let product = {
             productContainer.appendChild(productTitle);
             productContainer.appendChild(productText);
 
-            productText.textContent = this.productPriceArr[i] + ' rub';
-            productTitle.textContent = this.productNameArr[i];
+            productText.textContent = this.productList[i].price + ' rub';
+            productTitle.textContent = this.productList[i].name;
         };
     }
 }
